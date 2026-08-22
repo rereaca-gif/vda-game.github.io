@@ -61,7 +61,7 @@
                 <strong style="color:#ffd60a;">🎓 Резюме эксперта по ситуации:</strong>
                 <p id="expert-text" style="margin:5px 0 0 0; font-size:14px;"></p>
             </div>
-            <button class="btn" style="margin-top:15px;" onclick="nextCard()">Следующая карта ВДА 🎲</button>
+            <button class="btn" onclick="nextCard()">Следующая карта ВДА 🎲</button>
         </div>
     </div>
     <div id="finish-screen" class="hidden">
@@ -78,7 +78,6 @@
 <script>
 if (window.Telegram && window.Telegram.WebApp) {
     window.Telegram.WebApp.ready();
-    window.Telegram.WebApp.expand();
 }
 
 const fullDeck = [
