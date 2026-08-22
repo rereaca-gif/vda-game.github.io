@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Выход из ТЕНИ: Т-Игра</title>
+    <title>Т-Игра: Выход из ТЕНИ</title>
     <script src="https://telegram.org"></script>
     <style>
         body {
@@ -11,34 +11,39 @@
             background-color: #131313;
             color: #ffffff;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 90vh;
-            text-align: center;
-        }
-        h1 {
-            color: #ffd60a;
-            font-size: 26px;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #aaaaaa;
-            font-size: 16px;
-            line-height: 1.5;
-            margin-bottom: 30px;
+            min-height: 92vh;
         }
         .card {
             background-color: #1e1e1e;
             border: 1px solid #333333;
             border-radius: 12px;
-            padding: 25px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
+        h1 { color: #ffd60a; font-size: 24px; text-align: center; margin-top: 5px; }
+        h2 { color: #ffd60a; font-size: 20px; margin-top: 0; }
+        h3 { color: #34c759; font-size: 17px; margin-bottom: 8px; }
+        p { color: #cccccc; font-size: 15px; line-height: 1.4; margin: 8px 0; }
+        .step-block { display: none; margin-top: 15px; border-top: 1px dashed #444; padding-top: 15px; }
+        .step-active { display: block; }
+        textarea {
+            width: 100%;
+            height: 90px;
+            background-color: #2b2b2b;
+            color: #ffffff;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: none;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+        textarea:disabled { background-color: #1a1a1a; color: #888; border-color: #333; }
         .btn {
             display: block;
             width: 100%;
@@ -46,57 +51,129 @@
             color: white;
             border: none;
             border-radius: 10px;
-            padding: 18px;
-            font-size: 18px;
+            padding: 15px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 12px;
             box-sizing: border-box;
         }
-        .btn:active {
-            background-color: #248046;
+        .btn:active { background-color: #248046; }
+        .solution {
+            display: none;
+            background-color: #1c3222;
+            padding: 15px;
+            border-left: 4px solid #34c759;
+            border-radius: 6px;
+            margin-top: 15px;
         }
-        .btn-secondary {
-            background-color: #444444;
+        .tech-box {
+            background-color: #262626;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #ffd60a;
+            font-size: 14px;
+            margin-bottom: 12px;
         }
-        .btn-secondary:active {
-            background-color: #333333;
-        }
+        .expert-text { color: #ffd60a; font-style: italic; line-height: 1.5; }
     </style>
 </head>
 <body>
 
-    <div class="card">
+    <!-- ЭКРАН 1: СТАРТ И ВЫБОР СЦЕНАРИЯ -->
+    <div id="start-screen" class="card" style="margin: auto 0;">
         <h1>Выход из ТЕНИ 🎲</h1>
-        <p>Добро пожаловать в психологическую трансформационную игру. Ваше подсознание готово дать ответы.</p>
+        <p style="text-align:center; color:#aaa;">Полный интерактивный РЭТП-тренажер ВДА</p>
+        <button class="btn" onclick="startGame()">Выберите карту вашего сценария (Запрос на игру)</button>
+    </div>
+
+    <!-- ЭКРАН 2: ИГРОВОЙ ПРОЦЕСС -->
+    <div id="game-screen" class="card" style="display:none;">
+        <p style="color: #888; font-size: 12px; margin:0;">Текущий запрос / сценарий ВДА:</p>
+        <div id="scenario-title" style="font-weight:bold; font-size:17px; color:#ffd60a; margin-bottom:15px; border-bottom: 1px solid #333; padding-bottom: 10px;"></div>
         
-        <button class="btn" onclick="drawCard()">Получить карту подсказки ✨</button>
-        <button class="btn btn-secondary" onclick="closeApp()">Выйти из игры 🛑</button>
+        <!-- ШАГ 1: РАЗУМ -->
+        <div id="step-mind" class="step-block step-active">
+            <h3>🧠 Шаг 1: Разум (Мысли и убеждения)</h3>
+            <p id="mind-question"></p>
+            <textarea id="reply-mind" placeholder="Ваше осознание / Ответ на вопрос:"></textarea>
+            <button class="btn" id="btn-mind" onclick="submitStep('mind')">Зафиксировать мысль</button>
+            <div id="sol-mind" class="solution">
+                <p style="color:#ffd60a; font-weight:bold; margin-top:0;">✨ Новое терапевтическое решение:</p>
+                <p id="mind-solution-text"></p>
+                <button class="btn" onclick="nextStep('emotion')">Далее ➡ Шаг 2: Эмоции</button>
+            </div>
+        </div>
+
+        <!-- ШАГ 2: ЭМОЦИИ -->
+        <div id="step-emotion" class="step-block">
+            <h3>🎭 Шаг 2: Эмоции и Чувства</h3>
+            <p id="emotion-question"></p>
+            <textarea id="reply-emotion" placeholder="Что вы чувствуете прямо сейчас?"></textarea>
+            <button class="btn" id="btn-emotion" onclick="submitStep('emotion')">Выразить чувство</button>
+            <div id="sol-emotion" class="solution">
+                <p style="color:#ffd60a; font-weight:bold; margin-top:0;">✨ Трансформация чувства:</p>
+                <p id="emotion-solution-text"></p>
+                <button class="btn" onclick="nextStep('body')">Далее ➡ Шаг 3: Тело</button>
+            </div>
+        </div>
+
+        <!-- ШАГ 3: ТЕЛО -->
+        <div id="step-body" class="step-block">
+            <h3>🧘 Шаг 3: Тело (Ощущения и Регуляция)</h3>
+            <div id="body-technique" class="tech-box"></div>
+            <p>Выполните практику выше. Какие изменения вы заметили в теле?</p>
+            <textarea id="reply-body" placeholder="Опишите состояние тела (расслабление, тепло, зажимы)..."></textarea>
+            <button class="btn" id="btn-body" onclick="submitStep('body')">Сохранить телесный отклик</button>
+            <div id="sol-body" class="solution">
+                <p style="color:#ffd60a; font-weight:bold; margin-top:0;">✨ Телесное освобождение:</p>
+                <p id="body-solution-text"></p>
+                <button class="btn" onclick="nextStep('behavior')">Далее ➡ Шаг 4: Поведение</button>
+            </div>
+        </div>
+
+        <!-- ШАГ 4: ПОВЕДЕНИЕ -->
+        <div id="step-behavior" class="step-block">
+            <h3>🏃 Шаг 4: Поведение (Новое действие)</h3>
+            <p id="behavior-question"></p>
+            <textarea id="reply-behavior" placeholder="Как вы поступите по-новому?"></textarea>
+            <button class="btn" id="btn-behavior" onclick="submitStep('behavior')">Сформировать новый навык</button>
+            <div id="sol-behavior" class="solution">
+                <p style="color:#ffd60a; font-weight:bold; margin-top:0;">✨ Новая стратегия действий:</p>
+                <p id="behavior-solution-text"></p>
+                <button class="btn" style="background-color: #ffd60a; color: #000;" onclick="showSummary()">Завершить шаг и перейти к Резюме 🎓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 3: ФИНАЛ И ИТОГИ -->
+    <div id="summary-screen" class="card" style="display:none; margin: auto 0;">
+        <h2>🎓 Резюме эксперта</h2>
+        <div id="expert-resume" class="expert-text" style="margin-bottom:20px;"></div>
+        <button class="btn" style="background-color: #007aff;" onclick="sendDataToBot()">Сохранить результат и отправить мастеру</button>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем игру на весь экран смартфона
+        tg.expand();
 
-        function drawCard() {
-            // Список глубоких метафорических подсказок
-            const answers = [
-                "То, что вы ищете, скрыто в вашем самом глубоком страхе.",
-                "Примите свою теневую сторону — именно там скрыт ваш главный ресурс.",
-                "Сделайте шаг, которого больше всего боитесь. Там ваша свобода.",
-                "Перестаньте контролировать то, что от вас не зависит.",
-                "Вы уже знаете правильный ответ. Доверьтесь первому импульсу."
-            ];
-            
-            const randomIndex = Math.floor(Math.random() * answers.length);
-            alert("🔮 ПОДСКАЗКА ДЛЯ ВАС:\n\n" + answers[randomIndex]);
-        }
-
-        function closeApp() {
-            tg.close(); // Команда закрытия окна Web App внутри Telegram
-        }
-    </script>
-
-</body>
-</html>
+        // Полная база данных: 14 карт-сценариев ВДА
+        const cardsDB = {
+            1: {
+                title: "1. Иллюзия тотального контроля и гиперответственность",
+                mind: { q: "Какое глубокое убеждение заставляет вас верить, что если вы расслабитесь, то всё вокруг рухнет?", sol: "Я контролирую только свои мысли и действия. Мир и окружающие способны справиться без моей постоянной опеки." },
+                emotion: { q: "Какое фоновое чувство (страх, вина, тревога) заставляет вас постоянно быть настороже?", sol: "Под маской контроля прячется страх беспомощности. Я признаю этот страх, давая себе право быть уязвимым." },
+                body: { tech: "📋 ТЕХНИКА: 'Мышечный сброс'. На вдохе зажмите кулаки, плечи поднимите к ушам и задержите дыхание на 5 секунд. На выдохе резко опустите плечи и разожмите руки, мысленно сбрасывая груз ответственности. Повторите 3 раза.", sol: "Тело освобождается от брони контроля через физический сброс зажимов в плечевом поясе." },
+                behavior: { q: "Как вы отреагируете, когда чужие дела пойдут вопреки вашему плану? Будете ли вмешиваться?", sol: "Я делаю шаг назад. Оставляю другим людям их зону ответственности, их ошибки и их жизненный опыт." },
+                expert: "Вы проработали паттерн спасательства и контроля. Ваш главный ресурс — в умении делегировать и доверять течению событий."
+            },
+            2: {
+                title: "2. Безжалостная самокритика и перфекционизм",
+                mind: { q: "Чьим строгим голосом из вашего детства говорит ваш внутренний критик при малейшей неудаче?", sol: "Этот критик — отголосок чужих ожиданий из прошлого. Я отделяю себя от него и самостоятельно определяю свою ценность." },
+                emotion: { q: "Что вы испытываете, когда совершаете ошибку? Стыд, никчемность, страх отвержения?", sol: "Ошибаться — безопасно. Я заменяю разрушающий стыд на бережное самосострадание к себе." },
+                body: { tech: "📋 ТЕХНИКА: 'Объятия поддержки'. Скрестите руки на груди так, чтобы ладони легли на плечи. Начните мягко, поочередно похлопывать себя по плечам в ритме сердца, глубоко дыша животом 1 минуту.", sol: "Физический контакт возвращает телу базовое ощущение безопасности, снимая зажатость в груди." },
+                behavior: { q: "Как изменится ваше действие, когда вы в следующий раз сделаете что-то неидеально?", sol: "Я хвалю себя за усилия, присваиваю полученный опыт и отказываюсь от бесконечных переделок ради чужого одобрения." },
+                expert: "Осознание критика ослабляет его хватку. Разрешив себе быть неидеальным, вы открываете путь к настоящей аутентичности."
+            },
+            3: {
+                title: "3. Трудности в определении и защите личных границ",
