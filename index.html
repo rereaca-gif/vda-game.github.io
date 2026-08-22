@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выход из ТЕНИ</title>
+    <style>
+        body { font-family: sans-serif; background-color: #1a1a1a; color: #fff; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .container { max-width: 500px; width: 100%; text-align: center; }
+        h1 { color: #34c759; font-size: 22px; }
+        .card { background-color: #2c2c2e; border: 2px solid #3a3a3c; border-radius: 14px; padding: 20px; margin-bottom: 20px; text-align: left; }
+        .badge { display: inline-block; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; color: white; background-color: #ffd60a; color: #000; }
+        .sub-badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; color: white; margin-bottom: 10px; }
+        .bg-reason { background-color: #007aff; }
+        .bg-emotion { background-color: #af52de; }
+        .bg-body { background-color: #ff9500; }
+        .bg-behavior { background-color: #34c759; }
+        .question { font-style: italic; color: #ffd60a; margin-top: 15px; }
+        textarea { width: 100%; height: 80px; background-color: #1c1c1e; border: 1px solid #3a3a3c; border-radius: 10px; color: white; padding: 12px; box-sizing: border-box; margin-bottom: 15px; resize: none; }
+        .btn { display: block; width: 100%; background-color: #34c759; color: white; border: none; border-radius: 10px; padding: 15px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn:disabled { background-color: #3a3a3c; color: #8e8e93; }
+        .btn-copy { background-color: #007aff; margin-bottom: 12px; }
+        .solution { background-color: #1c1c1e; border-left: 4px solid #34c759; padding: 15px; margin-top: 15px; text-align: left; border-radius: 0 8px 8px 0; }
+        .expert-box { background-color: #1c1c1e; border-left: 4px solid #ffd60a; padding: 15px; margin-top: 15px; text-align: left; border-radius: 0 8px 8px 0; }
+        .hidden { display: none; }
+        .summary-item { background-color: #1c1c1e; padding: 12px; border-radius: 8px; margin-bottom: 12px; border-left: 3px solid #ff9500; text-align: left; font-size: 14px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Выход из ТЕНИ</h1>
+    <div id="start-screen">
+        <div class="card" style="text-align: center;">
+            <p>Вытяните карту ВДА, а затем последовательно проработайте её через 5 шагов: Разум 🧠 → Эмоции 🎭 → Тело 🌿 → Поведение 🎬 + экспертное резюме.</p>
+        </div>
+        <button class="btn" onclick="startGame()">Вытянуть карту ВДА 🎲</button>
+    </div>
+    <div id="game-screen" class="hidden">
+        <div id="progress" style="font-size:12px; color:#8e8e93; margin-bottom:10px; text-align:right;">Карта: 0</div>
+        <div class="card">
+            <div class="badge">🔥 Ситуация ВДА</div>
+            <div id="card-title" style="font-weight:bold; font-size:18px; margin-bottom:5px;">Название</div>
+            <p id="card-text" style="margin:0;">Текст...</p>
+        </div>
+        <div id="layer-card" class="card hidden">
+            <div id="layer-badge" class="sub-badge">Слой</div>
+            <p id="layer-question" class="question" style="margin:0;"></p>
+            <div id="input-block" style="margin-top:15px;">
+                <textarea id="player-answer" placeholder="Зафиксируйте ваш ответ письменно..." oninput="checkInput()"></textarea>
+                <button id="action-btn" class="btn" onclick="revealSolution()" disabled>Записать и увидеть Новое решение</button>
+            </div>
+            <div id="solution-block" class="solution hidden">
+                <strong style="color:#34c759;">Новое решение РЭТП:</strong>
+                <p id="solution-text" style="margin:5px 0 0 0; font-size:14px;"></p>
+                <button class="btn" style="margin-top:15px;" onclick="nextLayer()">Далее ➡</button>
+            </div>
+        </div>
+        <div id="expert-card" class="card hidden">
+            <div class="expert-box">
+                <strong style="color:#ffd60a;">🎓 Резюме эксперта по ситуации:</strong>
+                <p id="expert-text" style="margin:5px 0 0 0; font-size:14px;"></p>
+            </div>
+            <button class="btn" style="margin-top:15px;" onclick="nextCard()">Следующая карта ВДА 🎲</button>
+        </div>
+    </div>
+    <div id="finish-screen" class="hidden">
+        <div class="card">
+            <h2 style="color:#34c759; text-align:center;">Трансформация завершена!</h2>
+            <p>Вы успешно прошли все круги проработки. Все ваши ответы автоматически отправлены эксперту. Ниже сохранен ваш итоговый дневник:</p>
+            <button id="copy-btn" class="btn btn-copy" onclick="copyToClipboard()">📋 Скопировать итоги в буфер</button>
+            <div id="summary-container" style="max-height: 300px; overflow-y: auto;"></div>
+        </div>
+        <button class="btn" onclick="startGame()">Начать заново 🎲</button>
+    </div>
+</div>
+<script>
+const TELEGRAM_BOT_TOKEN = "8930417594:AAE_EW2DwbMvpLZFEJrxl6YxTFL9402Hbxc"; 
+const TELEGRAM_CHAT_ID = "1205405871";
+const fullDeck = [
+{title:"Сценарий 1: Критика на работе",text:"Начальник резко раскритиковал ваш отчет на общем рабочем собрании.",steps:[{name:"Разум 🧠",question:"Какая автоматическая мысль возникла? (Например: 'Я ничтожество, меня точно уволят')",solution:"Разделите поступок и личность. Ошибка в отчете не делает вас плохим человеком. Это просто рабочий факт."},{name:"Эмоции 🎭",question:"Какое чувство затопило вас? (Стыд, сильная вина, страх, гнев?)",solution:"Осознайте стыд. Это отголосок детской травмы, когда за ошибку лишали любви. Сейчас вы в безопасности."},{name:"Тело 🌿",question:"Где в теле сжалось? Сделайте вдох и глубокий выдох. Опустите плечи.",solution:"Расслабление мышц шеи и плеч блокирует выработку гормонов стресса и возвращает физический контроль."},{name:"Поведение 🎬",question:"Что хочется сделать и какое НОВОЕ взрослое действие вы выберете?",solution:"Вместо детских оправданий или побега спокойно уточните: 'Какие именно пункты нужно исправить?'."}],expertOpinion:"Выход из детской позиции Жертвы в офисе происходит через заземление в факты и отделение критики работы от оценки вашей личности."},
+{title:"Сценарий 2: Личные границы",text:"Близкий человек без вашего спроса распланировал за вас все ваши выходные дни.",steps:[{name:"Разум 🧠",question:"О чем подумал ваш разум? (Например: 'Мои желания никому не важны и не ценны')",solution:"Ваш разум привык уступать, чтобы выжить в детстве. Но во взрослой жизни ваши желания имеют приоритет."},{name:"Эмоции 🎭",question:"What вы чувствуете? Подавленный гнев или привычную горькую обиду?",solution:"Гнев — это здоровый маркер того, что ваши границы нарушены. Разрешите себе открыто злиться."},{name:"Тело 🌿",question:"Где застряла злость? Обратите внимание на сжатые челюсти. Разомкните зубы.",solution:"Расслабление челюсти снимает блок на выражение чувств и мгновенно снижает внутреннее давление."},{name:"Поведение 🎬",question:"Как вы поступите вместо привычного молчаливого угодничества?",solution:"Твердо и спокойно скажите: 'Мне приятно твое внимание, но на эти выходные у меня другие планы. Давай согласовывать заранее'."}],expertOpinion:"Обозначать свои границы сразу — это не эгоизм, а единственный способ сохранить искренние отношения без накопленной агрессии."},
+{title:"Сценарий 3: Просьба о помощи",text:"Вы завалены сложными задачами и не успеваете к дедлайну, но упорно отказываетесь от помощи коллег.",steps:[{name:"Разум 🧠",question:"Какое ложное убеждение заставляет тащить всё самому? ('Я должен быть идеальным'?)",solution:"Разум верит, что просить — это слабость. На самом деле это рациональное управление ресурсами."},{name:"Эмоции 🎭",question:"What подниется, если вы согласитесь? Стыд уязвимости или страх стать обузой?",solution:"Этот страх родом из детства, где нужно было быть удобным и не обременять родителей своими проблемами."},{name:"Тело 🌿",question:"Почувствуйте зажим контроля в груди. Сделайте 3 глубоких вдоха и выдоха животом.",solution:"Дыхание животом снижает фоновую тревогу гиперответственности и расслабляет диафрагму."},{name:"Поведение 🎬",question:"Какое новое действие вы предпримете в реальности?",solution:"Прямо скажите коллеге: 'Спасибо за предложение. Помоги мне, пожалуйста, вот с этой конкретной задачей'."}],expertOpinion:"Принятие помощи не уменьшает вашу профессиональную ценность. Вы не обязаны везти весь мир в одиночку на своем здоровье."},
+{title:"Сценарий 4: Синдром Самозванца",text:"Вам предлагают возглавить крупный проект, но внутри звучит: 'Я еще не готов, они увидят, что я обманщик'.",steps:[{name:"Разум 🧠",question:"Чьим критикующим голосом из прошлого разум обесценивает ваши реальные навыки?", solution:"Это голос токсичного родительского перфекционизма. Замените его на сухие факты ваших прошлых успехов."},{name:"Эмоции 🎭",question:"Какая базовая эмоция блокирует ваш рост? Страх разоблачения или парализующий стыд?",solution:"Разрешите себе бояться нового. Страх — нормальная реакция на расширение зоны вашего влияния."},{name:"Тело 🌿",question:"Почувствуйте, как сжалось тело. Выпрямите спину, расправьте плечи и потянитесь вверх.",solution:"Изменение позы на уверенную физиологически снижает уровень кортизола и поднимает уверенность."},{name:"Поведение 🎬",question:"Какое решение вы примете на поведенческом уровне?",solution:"Согласитесь на проект, разрешив себе быть неидеальным и учиться прямо в процессе решения новых задач."}],expertOpinion:"Вас уже выбрали за ваши текущие заслуги. Перестаньте требовать от себя стопроцентного знания будущего успеха на старте."},
