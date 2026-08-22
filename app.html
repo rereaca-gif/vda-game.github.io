@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВЫХОД ИЗ ТЕНИ: ПРОБУЖДЕНИЕ СВОБОДЫ</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, #131314 0%, #1e1e24 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 15px;
+            min-height: 94vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            background-color: #1a1a1f;
+            border: 1px solid #2d2d35;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 15px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+        }
+        h1 { color: #ffd60a; font-size: 22px; text-align: center; margin: 5px 0 15px 0; font-weight: 700; letter-spacing: 0.5px; }
+        h3 { font-size: 16px; margin-top: 0; margin-bottom: 10px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .title-mind { color: #8e9aaf; } .title-emotion { color: #e63946; } .title-body { color: #2a9d8f; } .title-behavior { color: #4895ef; }
+        p { color: #e0e0e6; font-size: 14px; line-height: 1.5; margin: 10px 0; }
+        .step-block { display: none; margin-top: 15px; border-top: 1px dashed #3d3d4a; padding-top: 15px; }
+        .step-active { display: block; }
+        
+        textarea {
+            width: 100%; height: 95px; background-color: #25252c; color: #ffffff;
+            border: 1px solid #424252; border-radius: 10px; padding: 12px;
+            box-sizing: border-box; resize: none; font-size: 14px; margin-top: 10px;
+        }
+        textarea:disabled { background-color: #141418; color: #71717a; border-color: #27272a; }
+        
+        .btn {
+            display: block; width: 100%; background-color: #22c55e; color: white;
+            border: none; border-radius: 10px; padding: 15px; font-size: 15px;
+            font-weight: bold; cursor: pointer; margin-top: 12px; box-sizing: border-box;
+            transition: background 0.2s;
+        }
+        .btn:active { background-color: #16a34a; }
+        .btn:disabled { background-color: #3f3f46; color: #a1a1aa; cursor: not-allowed; }
+        
+        /* Плитка чувств */
+        .emotion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+        .emotion-btn {
+            background-color: #272732; border: 1px solid #3f3f52; color: #e4e4e7;
+            padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; text-align: center;
+        }
+        .emotion-btn.selected { background-color: #e63946; border-color: #ff4d5a; color: white; }
+        
+        /* Таймер */
+        .timer-box {
+            background-color: #182c25; border: 1px solid #22c55e; color: #4ade80;
+            padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 15px; margin: 12px 0;
+        }
+        
+        .solution {
+            display: none; background-color: #14231c; padding: 15px;
+            border-left: 4px solid #22c55e; border-radius: 6px; margin-top: 15px;
+        }
+        .expert-box { background-color: #23231a; border-left: 4px solid #ffd60a; padding: 15px; border-radius: 6px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <!-- ЭКРАН 1: СТАРТ -->
+    <div id="start-screen" class="card" style="margin: auto 0;">
+        <h1>ВЫХОД ИЗ ТЕНИ 🎲</h1>
+        <p style="text-align:center; color:#a1a1aa; margin-bottom: 20px;">Интерактивный РЭТП-тренажер Пробуждения Свободы</p>
+        <button class="btn" onclick="startGame()">Вытянуть карту сценария ВДА</button>
+    </div>
+
+    <!-- ЭКРАН 2: ИГРОВОЙ ПРОЦЕСС -->
+    <div id="game-screen" class="card" style="display:none;">
+        <p style="color: #71717a; font-size: 12px; margin:0; font-weight:600;">ВАШ БАЗОВЫЙ ЗАПРОС / ТРАВМА:</p>
+        <div id="scenario-title" style="font-weight:700; font-size:16px; color:#ffd60a; margin-bottom:15px; border-bottom: 1px solid #2d2d35; padding-bottom: 12px; line-height:1.4;"></div>
+        
+        <!-- ШАГ 1: РАЗУМ -->
+        <div id="step-mind" class="step-block step-active">
+            <h3 class="title-mind">🧠 ШАГ 1: РАЗУМ (Когнитивный уровень)</h3>
+            <p style="color:#ffd60a; font-weight:600;" id="mind-name"></p>
+            <p id="mind-question"></p>
+            <textarea id="reply-mind" placeholder="Введите ваш честный письменный ответ..."></textarea>
+            <button class="btn" id="btn-mind" onclick="submitMind()">Осознать убеждение</button>
+            
+            <div id="sol-mind" class="solution">
+                <p style="color:#22c55e; font-weight:bold; margin-top:0; font-size:13px; letter-spacing:0.5px;">📋 РЭТП-ШАБЛОН РЕШЕНИЯ:</p>
+                <p id="mind-solution-text" style="font-style:italic;"></p>
+                <button class="btn" style="background-color:#4895ef" onclick="nextStep('emotion')">Далее ➡ Шаг 2: Эмоции</button>
+            </div>
+        </div>
+
+        <!-- ШАГ 2: ЭМОЦИИ -->
+        <div id="step-emotion" class="step-block">
+            <h3 class="title-emotion">🎭 ШАГ 2: ЭМОЦИИ (Фиксация чувства)</h3>
+            <p style="color:#ffd60a; font-weight:600;" id="emotion-name"></p>
+            <p id="emotion-question"></p>
+            
+            <p style="color:#a1a1aa; font-size:12px; margin-bottom:5px; font-weight:600;">ВЫБЕРИТЕ ОДНО ЧИСТОЕ БАЗОВОЕ ЧУВСТВО ДЛЯ ЛЕГАЛИЗАЦИИ:</p>
+            <div class="emotion-grid">
+                <button class="emotion-btn" onclick="selectEmotion(this, 'Страх')">Страх</button>
+                <button class="emotion-btn" onclick="selectEmotion(this, 'Обида')">Обида</button>
+                <button class="emotion-btn" onclick="selectEmotion(this, 'Вина')">Вина</button>
+                <button class="emotion-btn" onclick="selectEmotion(this, 'Токсичный Стыд')">Токсичный Стыд</button>
+                <button class="emotion-btn" onclick="selectEmotion(this, 'Гнев')">Гнев</button>
+            </div>
+            
+            <textarea id="reply-emotion" placeholder="Опишите, как это чувство проявляется в сценарии..."></textarea>
+            <button class="btn" id="btn-emotion" onclick="submitEmotion()">Легализовать эмоцию</button>
+            
+            <div id="sol-emotion" class="solution">
+                <p style="color:#22c55e; font-weight:bold; margin-top:0; font-size:13px;">✨ ФОРМУЛА ЛЕГАЛИЗАЦИИ ЧУВСТВ:</p>
+                <p id="emotion-solution-text" style="font-style:italic;"></p>
+                <button class="btn" style="background-color:#4895ef" onclick="initBodyStep()">Далее ➡ Шаг 3: Тело</button>
+            </div>
+        </div>
+
+        <!-- ШАГ 3: ТЕЛО -->
+        <div id="step-body" class="step-block">
+            <h3 class="title-body">🧘 ШАГ 3: ТЕЛО (Соматическая регуляция)</h3>
+            <p style="color:#ffd60a; font-weight:600;" id="body-name"></p>
+            <p id="body-checkin" style="background-color:#22222a; padding:10px; border-radius:8px; border-left:3px solid #2a9d8f; font-size:13px;"></p>
+            
+            <p style="color:#4ade80; font-weight:600; margin-top:15px; font-size:13px;">⚙️ ОБЯЗАТЕЛЬНОЕ ФИЗИЧЕСКОЕ УПРАЖНЕНИЕ (Выполняйте по таймеру):</p>
+            <p id="body-technique" style="line-height:1.4; color:#fff; font-weight:500;"></p>
+            
+            <div id="timer-display" class="timer-box">Дождитесь окончания практики: 60 сек</div>
+            
+            <textarea id="reply-body" placeholder="Что изменилось в телесных ощущениях после выполнения практики?" disabled></textarea>
+            <button class="btn" id="btn-body" onclick="submitBody()" disabled>Сохранить телесный отклик</button>
+            
+            <div id="sol-body" class="solution">
+                <p style="color:#22c55e; font-weight:bold; margin-top:0; font-size:13px;">🌿 ТЕЛЕСНОЕ ОСВОБОЖДЕНИЕ:</p>
+                <p id="body-solution-text" style="font-style:italic;"></p>
+                <button class="btn" style="background-color:#4895ef" onclick="nextStep('behavior')">Далее ➡ Шаг 4: Поведение</button>
+            </div>
+        </div>
+
+        <!-- ШАГ 4: ПОВЕДЕНИЕ -->
+        <div id="step-behavior" class="step-block">
+            <h3 class="title-behavior">🏃 ШАГ 4: ПОВЕДЕНИЕ (Действие в социуме)</h3>
+            <p style="color:#ffd60a; font-weight:600;" id="behavior-name"></p>
+            <p id="behavior-question"></p>
+            
+            <p style="color:#ffd60a; font-size:12px; font-weight:bold; margin-top:10px;">⚠️ ПРАВИЛО: Действие должно быть микроскопическим (5-15 минут), безопасным и выполненным в течение 48 часов!</p>
+            
+            <textarea id="reply-behavior" placeholder="Опишите ваши конкретные шаги / План действий..."></textarea>
+            <button class="btn" id="btn-behavior" onclick="submitBehavior()">Сформировать новый паттерн</button>
+            
+            <div id="sol-behavior" class="solution">
+                <p style="color:#22c55e; font-weight:bold; margin-top:0; font-size:13px;">🚀 РЕЧЕВОЙ СКРИПТ-ШАБЛОН ДЕЙСТВИЯ:</p>
+                <p id="behavior-solution-text" style="font-style:italic;"></p>
+                <button class="btn" style="background-color: #ffd60a; color: #000;" onclick="showSummary()">Получить Кризисное Резюме 🎓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 3: ФИНАЛ -->
+    <div id="summary-screen" class="card" style="display:none; margin: auto 0;">
+        <h2 style="text-align:center;">🎯 ИГРА ЗАВЕРШЕНА</h2>
+        <div class="expert-box">
+            <p style="color:#ffd60a; font-weight:bold; margin-top:0; font-size:13px;">🎓 РЕЗЮМЕ ЭКСПЕРТА:</p>
+            <p id="expert-resume" style="line-height:1.5; font-size:14px; color:#fff; font-style:italic;"></p>
+        </div>
 
