@@ -127,20 +127,8 @@
     </div>
 
     <script>
-        const vdaCards = [
-            "Карта №1: Изоляция. Мы изолируемся и боимся людей, особенно начальников и властных структур.",
-            "Карта №2: Одобрение. Мы стали зависимы от одобрения окружающих и полностью потеряли себя в этом.",
-            "Карта №3: Чужой гнев. Нас панически пугают разгневанные люди и любые критические замечания.",
-            "Карта №5: Жалость и Любовь. Мы путаем любовь с жалостью и склонны «спасать» тех, кого можно пожалеть.",
-            "Карта №6: Гиперответственность. Мы гиперответственны за весь мир, либо абсолютно безответственны.",
-            "Карта №10: Жестокий критик. Мы безжалостно судим и критикуем сами себя, имея низкую самооценку."
-        ];
-
-        let selectedVda = "";
-
         function startGame() {
-            selectedVda = vdaCards[Math.floor(Math.random() * vdaCards.length)];
-            document.getElementById("scenario-title").innerText = selectedVda;
+            document.getElementById("scenario-title").innerText = "Карта №1: Изоляция. Мы изолируемся и боимся людей, особенно начальников и властных структур.";
             document.getElementById("start-screen").style.display = "none";
             document.getElementById("game-screen").style.display = "block";
         }
@@ -152,3 +140,19 @@
         }
 
         function submitEmotion() {
+            if (!document.getElementById("reply-emotion").value.trim()) { alert("Введите ответ!"); return; }
+            document.getElementById("btn-emotion").style.display = "none";
+            document.getElementById("sol-emotion").style.display = "block";
+        }
+
+        function initBodyStep() {
+            nextStep('body');
+            let timeLeft = 60;
+            const timerDisplay = document.getElementById("timer-display");
+            const interval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    timerDisplay.innerText = `Дождитесь окончания практики: ${timeLeft} sec`;
+                } else {
+                    clearInterval(interval);
+                    timerDisplay.innerText = "✅ ПРАКТИКА ВЫПОЛНЕНА! Поле разблокировано.";
