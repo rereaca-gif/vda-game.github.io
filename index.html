@@ -26,6 +26,8 @@
         .hidden { display: none; }
         .summary-item { background-color: #1c1c1e; padding: 12px; border-radius: 8px; margin-bottom: 12px; border-left: 3px solid #ff9500; text-align: left; font-size: 14px; }
     </style>
+    <!-- Подключаем внешний файл со сценариями -->
+    <script src="deck.js"></script>
 </head>
 <body>
 <div class="container">
@@ -80,8 +82,125 @@ if (window.Telegram && window.Telegram.WebApp) {
     window.Telegram.WebApp.ready();
 }
 
-const fullDeck = [
-{title:"Сценарий 1: Критика на работе",text:"Начальник резко раскритиковал ваш отчет на общем рабочем собрании.",steps:[{name:"Разум 🧠",question:"Какая автоматическая мысль возникла?",solution:"Разделите поступок и личность. Ошибка в отчете не делает вас плохим человеком. Это просто рабочий факт."},{name:"Эмоции 🎭",question:"Какое чувство затопило вас? (Стыд, сильная вина, страх, гнев?)",solution:"Осознайте стыд. Это отголосок детской травмы, когда за ошибку лишали любви. Сейчас вы в безопасности."},{name:"Тело 🌿",question:"Где в теле сжалось? Сделайте вдох и глубокий выдох. Опустите плечи.",solution:"Расслабление мышц шеи и плеч блокирует выработку гормонов стресса и возвращает физический контроль."},{name:"Поведение 🎬",question:"Что хочется сделать и какое НОВОЕ взрослое действие вы выберете?",solution:"Вместо детских оправданий или побега спокойно уточните: 'Какие именно пункты нужно исправить?'."}],expertOpinion:"Выход из детской позиции Жертвы в офисе происходит через заземление в факты и отделение критики работы от оценки вашей личности."},
-{title:"Сценарий 2: Личные границы",text:"Близкий человек без вашего спроса распланировал за вас все ваши выходные дни.",steps:[{name:"Разум 🧠",question:"О чем подумал ваш разум?",solution:"Ваш разум привык уступать, чтобы выжить в детстве. Но во взрослой жизни ваши желания имеют приоритет."},{name:"Эмоции 🎭",question:"Что вы чувствуете? Подавленный гнев или привычную горькую обиду?",solution:"Гнев — это здоровый маркер того, что ваши границы нарушены. Разрешите себе открыто злиться."},{name:"Тело 🌿",question:"Где застряла злость? Обратите внимание на сжатые челюсти. Разомкните зубы.",solution:"Расслабление челюсти снимает блок на выражение чувств и мгновенно снижает внутреннее давление."},{name:"Поведение 🎬",question:"Как вы поступите вместо привычного молчаливого угодничества?",solution:"Твердо и спокойно скажите: 'Мне приятно твое внимание, но на эти выходные у меня другие планы. Давай согласовывать заранее'."}],expertOpinion:"Обозначать свои границы сразу — это не эгоизм, а единственный способ сохранить искренние отношения без накопленной агрессии."},
-{title:"Сценарий 3: Просьба о помощи",text:"Вы завалены сложными задачами и не успеваете к дедлайну, но упорно отказываетесь от помощи коллег.",steps:[{name:"Разум 🧠",question:"Какое ложное убеждение заставляет тащить всё самому?",solution:"Разум верит, что просить — это слабость. На самом деле это рациональное управление ресурсами."},{name:"Эмоции 🎭",question:"Что подниется, если вы согласитесь? Стыд уязвимости или страх стать обузой?",solution:"Этот страх родом из детства, где нужно было быть удобным и не обременять родителей своими проблемами."},{name:"Тело 🌿",question:"Почувствуйте зажим контроля в груди. Сделайте 3 глубоких вдоха и выдоха животом.",solution:"Дыхание животом снижает фоновую тревогу гиперответственности и расслабляет диафрагму."},{name:"Поведение 🎬",question:"Какое новое действие вы предпримете в реальности?",solution:"Прямо скажите коллеге: 'Спасибо за предложение. Помоги мне, пожалуйста, вот с этой конкретной задачей'."}],expertOpinion:"Принятие помощи не уменьшает вашу профессиональную ценность. Вы не обязаны везти весь мир в одиночку на своем здоровье."},
-{title:"Сценарий 4: Синдром Самозванца",text:"Вам предлагают возглавить крупный проект, но внутри звучит: 'Я еще не готов, они увидят, что я обманщик'.",steps:[{name:"Разум 🧠",question:"Чьим критикующим голосом из прошлого разум обесценивает ваши реальные навыки?", solution:"Это голос токсичного родительского перфекционизма. Замените его на сухие факты ваших прошлых успехов."},{name:"Эмоции 🎭",question:"Какая базовая эмоция блокирует ваш рост? Страх разоблачения или парализующий стыд?",solution:"Разрешите себе бояться нового. Страх — нормальная реакция на расширение зоны вашего влияния."},{name:"Тело 🌿",question:"Почувствуйте, как сжалось тело. Выпрямите спину, расправьте плечи и потянитесь вверх.",solution:"Изменение позы на уверенную физиологически снижает уровень кортизола и поднимает уверенность."},{name:"Поведение 🎬",question:"Какое решение вы примете на поведенческом уровне?",solution:"Согласитесь на проект, разрешив себе быть неидеальным и учиться прямо в процессе решения новых задач."}],expertOpinion:"Вас уже выбрали за ваши текущие заслуги. Перестаньте требовать от себя стопроцентного знания будущего успеха на старте."},
+let shuffledDeck = [];
+let currentCardIdx = -1;
+let currentLayerIdx = 0;
+let gameHistory = [];
+
+function startGame() {
+    if (typeof fullDeck === 'undefined' || fullDeck.length === 0) {
+        alert("База сценариев еще загружается, подождите 5 секунд и нажмите снова!");
+        return;
+    }
+    shuffledDeck = fullDeck.slice().sort(() => Math.random() - 0.5);
+    currentCardIdx = -1;
+    gameHistory = [];
+    nextCard();
+}
+
+function nextCard() {
+    currentCardIdx++;
+    document.getElementById("start-screen").classList.add("hidden");
+    document.getElementById("expert-card").classList.add("hidden");
+    document.getElementById("finish-screen").classList.add("hidden");
+    
+    if (currentCardIdx < shuffledDeck.length) {
+        document.getElementById("game-screen").classList.remove("hidden");
+        document.getElementById("progress").innerText = "Карта: " + (currentCardIdx + 1) + " из " + shuffledDeck.length;
+        
+        const card = shuffledDeck[currentCardIdx];
+        document.getElementById("card-title").innerText = card.title;
+        document.getElementById("card-text").innerText = card.text;
+        
+        currentLayerIdx = 0;
+        showLayer();
+    } else {
+        document.getElementById("game-screen").classList.add("hidden");
+        showFinalSummary();
+    }
+}
+
+function showLayer() {
+    document.getElementById("layer-card").classList.remove("hidden");
+    document.getElementById("input-block").classList.remove("hidden");
+    document.getElementById("solution-block").classList.add("hidden");
+    document.getElementById("player-answer").value = "";
+    document.getElementById("player-answer").disabled = false;
+    document.getElementById("action-btn").disabled = true;
+
+    const card = shuffledDeck[currentCardIdx];
+    const step = card.steps[currentLayerIdx];
+    
+    let badge = document.getElementById("layer-badge");
+    badge.innerText = step.name;
+    badge.className = "sub-badge";
+    if (step.name.includes("Разум")) badge.classList.add("bg-reason");
+    if (step.name.includes("Эмоции")) badge.classList.add("bg-emotion");
+    if (step.name.includes("Тело")) badge.classList.add("bg-body");
+    if (step.name.includes("Поведение")) badge.classList.add("bg-behavior");
+
+    document.getElementById("layer-question").innerText = step.question;
+}
+
+function checkInput() {
+    const text = document.getElementById("player-answer").value.trim();
+    document.getElementById("action-btn").disabled = (text.length === 0);
+}
+
+function revealSolution() {
+    const text = document.getElementById("player-answer").value.trim();
+    const card = shuffledDeck[currentCardIdx];
+    const step = card.steps[currentLayerIdx];
+
+    gameHistory.push({
+        cardTitle: card.title,
+        layerName: step.name,
+        playerText: text
+    });
+
+    document.getElementById("player-answer").disabled = true;
+    document.getElementById("input-block").classList.add("hidden");
+    document.getElementById("solution-text").innerText = step.solution;
+    document.getElementById("solution-block").classList.remove("hidden");
+}
+
+function nextLayer() {
+    currentLayerIdx++;
+    const card = shuffledDeck[currentCardIdx];
+    
+    if (currentLayerIdx < card.steps.length) {
+        showLayer();
+    } else {
+        document.getElementById("layer-card").classList.add("hidden");
+        document.getElementById("expert-text").innerText = card.expertOpinion;
+        document.getElementById("expert-card").classList.remove("hidden");
+    }
+}
+
+function showFinalSummary() {
+    const container = document.getElementById("summary-container");
+    container.innerHTML = "";
+    gameHistory.forEach(item => {
+        const block = document.createElement("div");
+        block.className = "summary-item";
+        block.innerHTML = `<b>📍 ${item.cardTitle}</b><br><span style="color:#a1a1a4;">${item.layerName}:</span> "${item.playerText}"`;
+        container.appendChild(block);
+    });
+    document.getElementById("finish-screen").classList.remove("hidden");
+}
+
+function generateReportText() {
+    let text = "📝 ДНЕВНИК Т-ИГРЫ «ВЫХОД ИЗ ТЕНИ»\n\n";
+    let lastTitle = "";
+    gameHistory.forEach(item => {
+        if (item.cardTitle !== lastTitle) {
+            text += `\n🃏 ${item.cardTitle.toUpperCase()}\n`;
+            lastTitle = item.cardTitle;
+        }
+        text += `🔹 ${item.layerName}: ${item.playerText}\n`;
+    });
+    return text;
+}
+
+function copyToClipboard() {
+    const report = generateReportText();
